@@ -24,15 +24,51 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  const { user } = request;
+
+  if (user.pro === true || user.todos.length < 10 ) {
+    return next();
+  } else {
+    return response.status(403).json({ error: "You ran out of TODOs. Sign to PRO plan for more."});
+  }
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const { id } = request.params;
+  const { username } = request.headers;
+
+  user = users.find((user) => user.username === username);
+
+  if(!user) {
+    return response.status(404).json({ error: "User not found."});
+  }
+
+  todo = user.todos.find((todo) => todo.id === id);
+
+  if(!validate(id)) {
+    return response.status(403).json({error: "This ID is not valid."});
+  } else if (!todo) {
+    return response.status(404).json({error: "Invalid TODO information."});    
+  }
+
+  request.user = user;
+  request.todo = todo;
+
+  return next();
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const { id } = request.params;
+
+  const user = users.find((user) => user.id === id);
+  
+  if(!user) {
+    return response.status(404).json({ error: "User not found."});
+  }
+
+  request.user = user;
+
+  return next();
 }
 
 app.post('/users', (request, response) => {
