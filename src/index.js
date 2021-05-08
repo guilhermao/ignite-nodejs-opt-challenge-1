@@ -46,7 +46,7 @@ function checksTodoExists(request, response, next) {
   todo = user.todos.find((todo) => todo.id === id);
 
   if(!validate(id)) {
-    return response.status(403).json({error: "This ID is not valid."});
+    return response.status(400).json({error: "This ID is not valid."});
   } else if (!todo) {
     return response.status(404).json({error: "Invalid TODO information."});    
   }
